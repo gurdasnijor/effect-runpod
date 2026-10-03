@@ -1,0 +1,10 @@
+[
+  { "op": "replace", "path": "/paths/~1pods~1{podId}~1update/post/operationId", "value": "UpdatePodPost" },
+  { "op": "replace", "path": "/paths/~1endpoints~1{endpointId}~1update/post/operationId", "value": "UpdateEndpointPost" },
+  { "op": "replace", "path": "/paths/~1templates~1{templateId}~1update/post/operationId", "value": "UpdateTemplatePost" },
+  { "op": "replace", "path": "/paths/~1networkvolumes~1{networkVolumeId}~1update/post/operationId", "value": "UpdateNetworkVolumePost" },
+  { "op": "replace", "path": "/components/schemas/PodCreateInput/properties/ports/default", "value": ["8888/http", "22/tcp"] },
+  { "op": "replace", "path": "/components/schemas/PodUpdateInput/properties/ports/default", "value": ["8888/http", "22/tcp"] },
+  { "op": "replace", "path": "/components/schemas/TemplateCreateInput/properties/ports/default", "value": ["8888/http", "22/tcp"] },
+  { "op": "replace", "path": "/components/schemas/TemplateUpdateInput/properties/ports/default", "value": ["8888/http", "22/tcp"] }
+]
