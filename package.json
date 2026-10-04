@@ -1,10 +1,13 @@
 {
   "name": "@gurdasnijor/effect-runpod",
-  "version": "0.1.0",
-  "description": "Effect HTTP client for the RunPod REST API",
+  "version": "0.2.0",
+  "description": "RunPod REST v2 SDK generated with Distilled, with a cached-model extension",
   "type": "module",
   "license": "MIT",
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -12,17 +15,18 @@
     }
   },
   "scripts": {
-    "generate": "openapigen --spec spec/runpod.openapi.json --patch spec/patch.json --name Runpod --format httpclient > src/generated.ts",
+    "generate": "node --experimental-strip-types scripts/generate.ts",
     "build": "tsc -p tsconfig.json",
     "check": "pnpm build && node --test test/*.test.mjs"
   },
   "peerDependencies": {
-    "effect": "^4.0.0-rc.115"
+    "effect": "^4.0.0"
   },
   "devDependencies": {
-    "@effect/openapi-generator": "4.0.0-rc.115",
-    "@effect/platform-node": "4.0.0-rc.115",
-    "effect": "4.0.0-rc.115",
+    "effect": "4.0.0",
     "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@distilled.cloud/core": "1.0.0-rc.13"
   }
 }
