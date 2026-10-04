@@ -5,13 +5,13 @@ Generated Effect HTTP client and schemas for the [RunPod REST v1 API](https://do
 Install from GitHub with Effect 4 and an HTTP client implementation:
 
 ```sh
-pnpm add github:gurdasnijor/effect-runpod effect@4.0.0-rc.115 @effect/platform-node@4.0.0-rc.115
+pnpm add github:gurdasnijor/effect-runpod effect@4.0.0 @effect/platform-node@4.0.0
 ```
 
 ```ts
 import { NodeHttpClient } from "@effect/platform-node";
 import { Effect } from "effect";
-import { HttpClient } from "effect/unstable/http";
+import { HttpClient } from "effect/http";
 import { makeAuthenticated } from "@gurdasnijor/effect-runpod";
 
 const program = Effect.gen(function* () {

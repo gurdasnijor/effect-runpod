@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 export type Credentials = {
     readonly apiKey: string;
     /** API base URL, including /v1. */
