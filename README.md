@@ -32,6 +32,8 @@ resolved per request; `apiBaseUrl` overrides the origin (not the `/v2` prefix).
 V2's published schema has no model-caching setting. `getCachedModels({ id })` and
 `setCachedModels({ id, models })` use the existing GraphQL API for that feature only.
 References have the form `https://huggingface.co/org/model:revision`; `[]` clears them.
+The setter returns server-resolved references: RunPod resolves branches/tags to
+immutable commit hashes. Use pinned revisions for repeatable IaC comparisons.
 The extension currently targets GPU endpoints. RunPod's `saveEndpoint` mutation
 replaces configuration, so the adapter reads current configuration, including the
 endpoint's bound template and gated-model environment, before changing references.
@@ -61,7 +63,8 @@ The snapshot, generator, generated source and compiled `dist/` are committed so 
 pinned Git dependency works without install scripts. The generator adds explicit
 cursor pagination metadata and excludes SSE routes. Do not edit generated files.
 Tests use mocked HTTP and check v2 encoding, pagination/nullability, typed errors,
-strict decoding and cached-model round trips. They do not certify live v2/GraphQL
-interoperability or provision GPU workers.
+strict decoding and cached-model round trips. A live zero-worker probe also verified v2 create/update/delete, GraphQL cache
+set/read/clear, and preservation of container settings and gated-model credentials.
+Temporary endpoints were deleted; no GPU inference was run.
 
 This version replaces the old REST v1 `makeAuthenticated` interface.

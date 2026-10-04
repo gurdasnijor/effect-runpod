@@ -10,7 +10,7 @@ import * as Runpod from "../dist/index.js";
 
 const endpoint = (id = "ep-1") => ({
   id, name: "flux", image: "ghcr.io/test/flux@sha256:123", env: { HF_TOKEN: "secret" },
-  type: "QUEUE", gpu: { pools: ["HOPPER_80"], count: 1, allowedCudaVersions: [], minCudaVersion: null },
+  type: "QUEUE", gpu: { pools: ["ADA_80_PRO"], count: 1, allowedCudaVersions: [], minCudaVersion: null },
   workers: { min: 0, max: 1 }, scaling: { type: "REQUEST_COUNT", requestCount: 1 },
   dataCenterIds: [], networkVolumes: [], timeout: 1800000, flashboot: "FLASHBOOT",
   createdAt: "2026-10-03T00:00:00Z", registry: null,
@@ -52,7 +52,7 @@ test("generated pagination follows nextCursor and accepts null on the final page
 
 test("generated create uses inline container settings, nullable registry and scaling union", async () => {
   const f = fixture(() => new Response(JSON.stringify(endpoint()), { status: 201, headers: { "content-type": "application/json" } }));
-  await f.run(Runpod.createEndpoint({ name: "flux", type: "QUEUE", image: "image", registry: null, gpu: { pools: ["HOPPER_80"] }, scaling: { type: "REQUEST_COUNT", requestCount: 1 } }));
+  await f.run(Runpod.createEndpoint({ name: "flux", type: "QUEUE", image: "image", registry: null, gpu: { pools: ["ADA_80_PRO"] }, scaling: { type: "REQUEST_COUNT", requestCount: 1 } }));
   assert.equal(f.calls[0].body.scaling.type, "REQUEST_COUNT");
   assert.equal(f.calls[0].body.registry, null);
 });
@@ -70,7 +70,7 @@ test("strict decoding rejects malformed success responses without exposing their
 });
 
 const cachedConfig = () => ({
-  id: "ep-1", name: "flux", templateId: "v2-bound-template", gpuIds: "HOPPER_80,-NVIDIA H100 PCIe",
+  id: "ep-1", name: "flux", templateId: "v2-bound-template", gpuIds: "ADA_80_PRO,-NVIDIA H100 PCIe",
   gpuCount: 1, workersMin: 0, workersMax: 1, scalerType: "REQUEST_COUNT", scalerValue: 1,
   idleTimeout: 60, executionTimeoutMs: 1800000, flashBootType: "FLASHBOOT", minCudaVersion: "13.0",
   allowedCudaVersions: null, locations: "", networkVolumeId: null, networkVolumeIds: [],
@@ -104,4 +104,13 @@ test("incomplete GraphQL configuration fails before replacement", async () => {
   const f = fixture(() => ({ data: { myself: { endpoint: { id: "ep-1", modelReferences: [] } } } }));
   await assert.rejects(f.run(Runpod.setCachedModels({ id: "ep-1", models: ["model"] })));
   assert.equal(f.calls.length, 1);
+});
+
+
+test("cached-model writes return server-resolved revisions", async () => {
+  const resolved = ["https://huggingface.co/org/model:" + "a".repeat(40)];
+  const f = fixture(({ body }) => body.query.startsWith("mutation")
+    ? { data: { saveEndpoint: { id: "ep-1", modelReferences: resolved } } }
+    : { data: { myself: { endpoint: cachedConfig() } } });
+  assert.deepEqual(await f.run(Runpod.setCachedModels({ id: "ep-1", models: ["https://huggingface.co/org/model:main"] })), resolved);
 });

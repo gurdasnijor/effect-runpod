@@ -66,10 +66,14 @@ export const setCachedModels = Effect.fn(function* ({ id, models }) {
     if (!myself.endpoint)
         return yield* Effect.fail(new NotFound({ message: "RunPod endpoint not found" }));
     const { template, ...live } = myself.endpoint;
+    if (live.id !== id)
+        return yield* Effect.fail(new RunpodError({ operation: "cached models identity" }));
     if (JSON.stringify(live.modelReferences ?? []) === JSON.stringify(models))
-        return;
+        return live.modelReferences ?? [];
     const { saveEndpoint } = yield* graphql("mutation CachedModels($input: EndpointInput!) { saveEndpoint(input: $input) { id modelReferences } }", { input: { ...live, env: template.env ?? [], modelReferences: [...models], locations: live.locations ?? "", networkVolumeIds: live.networkVolumeIds ?? [] } }, Schema.Struct({ saveEndpoint: Schema.Struct(identity) }));
-    if (saveEndpoint.id !== id || JSON.stringify(saveEndpoint.modelReferences ?? []) !== JSON.stringify(models)) {
+    if (saveEndpoint.id !== id) {
         return yield* Effect.fail(new RunpodError({ operation: "cached models confirmation" }));
     }
+    // RunPod resolves branch/tag references to immutable commits.
+    return saveEndpoint.modelReferences ?? [];
 });

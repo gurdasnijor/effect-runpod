@@ -14,4 +14,4 @@ export declare const getCachedModels: (args_0: {
 export declare const setCachedModels: (args_0: {
     id: string;
     models: readonly string[];
-}) => Effect.Effect<undefined, RunpodError | NotFound, Credentials | HttpClient.HttpClient>;
+}) => Effect.Effect<readonly string[], RunpodError | NotFound, Credentials | HttpClient.HttpClient>;
